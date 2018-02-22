@@ -68,8 +68,10 @@
         items: [
           { icon: 'apps', title: 'Security Panel', to: '/' },
           { icon: 'settings_input_component', title: 'GPIO', to: '/gpio' },
-          { icon: 'email', title: 'Messages', to: '/messages' },
+          { icon: 'inbox', title: 'Inbox', to: '/inbox' },
+          { icon: 'send', title: 'Outbox', to: '/outbox' },
           { icon: 'message', title: 'Sms gateway', to: '/smsgateway' },
+          { icon: 'perm_identity', title: 'Permissions', to: '/permissions' },
           { icon: 'list', title: 'Logs', to: '/logs' },
         ],
         miniVariant: false,

@@ -8,6 +8,7 @@
               :false-value="false"
               v-model="stateCache[gpio.PinName]"
               :readonly="gpio.ReadOnly == 1"
+              @change="onChange(gpio, $event)"
               color="orange">
         </v-switch>
         </template>
@@ -27,25 +28,33 @@ export default {
         gpios: 'api/gpioList'
       }),
     localGpios() {
-      
       return this.gpios.map((item, index) => {
-        Vue.set( this.stateCache, item.PinName, item.State);
-        return { index, State: item.State, ReadOnly: item.ReadOnly, PinName: item.PinName }});
+        Vue.set( this.stateCache, item.PinName, item.State == 1);
+        return item});
     },
   },
   data () {
     return {
       stateCache: {}
     }
-    
   },
   methods: {
-    onChange(event){
-      console.log(event);
+    onChange(gpio,state){
+      if (gpio.ReadOnly === 1) {
+        alert("GPIO is read only");
+        state = 0;
+        this.$store.commit('api/updateGpio', { gpio, state })
+      } else {
+        this.setGpio({PinName: gpio.PinName, State: state})
+        .catch((error) => {
+          console.log(error);
+          alert(error);
+        })
+      }
     },
     formatLabel(gpio){
       var isReadOnly = gpio.ReadOnly == 1 ? '- read-only' : '';
-      return gpio.PinName + isReadOnly;
+      return gpio.Description +'(' +gpio.PinName + isReadOnly + ')';
     },
     ...mapActions({
       getGpio: 'api/getGpio',

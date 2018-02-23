@@ -39,12 +39,6 @@
       >
         <v-icon>web</v-icon>
       </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>remove</v-icon>
-      </v-btn>
       <v-toolbar-title v-text="title"></v-toolbar-title>
     </v-toolbar>
     <v-content>
@@ -52,9 +46,6 @@
         <nuxt />
       </v-container>
     </v-content>
-    <v-footer :fixed="fixed" app>
-      <span>&copy; Basement Security Panel 2017</span>
-    </v-footer>
   </v-app>
 </template>
 
@@ -64,7 +55,6 @@
       return {
         clipped: false,
         drawer: true,
-        fixed: false,
         items: [
           { icon: 'apps', title: 'Security Panel', to: '/' },
           { icon: 'settings_input_component', title: 'GPIO', to: '/gpio' },

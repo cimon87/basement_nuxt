@@ -19,10 +19,14 @@ import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
+  data () {
+    return {
+      stateCache: {}
+    }
+  },
   created () {
     this.getGpioLocal();
   },
-  
   computed: {
     ...mapGetters({
         gpios: 'api/gpioList'
@@ -32,11 +36,6 @@ export default {
         Vue.set( this.stateCache, item.PinName, item.State == 1);
         return item});
     },
-  },
-  data () {
-    return {
-      stateCache: {}
-    }
   },
   methods: {
     onChange(gpio,state){

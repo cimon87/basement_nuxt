@@ -11,13 +11,13 @@
   >
   <v-progress-linear slot="progress" color="blue"  indeterminate></v-progress-linear>
     <template slot="items" slot-scope="props">
-       <td class="text-xs-right">
+       <td style='width: 20px' class="text-xs-right">
           <v-icon v-if="props.item.level === `info`" color="blue">info</v-icon>
           <v-icon v-if="props.item.level === `warning`" color="orange">warning</v-icon>
           <v-icon v-if="props.item.level === `error`" color="red">error</v-icon>
         </td>
-      <td class="text-xs-right">{{ props.item.message }}</td>
-      <td class="text-xs-right">{{ formatDate(props.item.timestamp) }}</td>
+      <td class="text-xs-left">{{ props.item.message }}</td>
+      <td class="text-xs-left">{{ formatDate(props.item.timestamp) }}</td>
     </template>
   </v-data-table>
       </v-flex>
@@ -54,9 +54,9 @@
     data() {
       return {
         headers: [
-          { value: 'level', text: "Level", sortable: true },
-          { value: 'message', text: "Message", sortable: true },
-          { value: 'timestamp', text: "Date", sortable: true }
+          { value: 'level', text: "Level", sortable: true, align: 'center'},
+          { value: 'message', text: "Message", sortable: true, align: 'left'},
+          { value: 'timestamp', text: "Date", sortable: true, align: 'left'}
         ],
         pagination: {
           sortBy: 'timestamp',

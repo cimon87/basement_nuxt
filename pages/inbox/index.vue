@@ -11,9 +11,9 @@
   >
   <v-progress-linear slot="progress" color="blue"  indeterminate></v-progress-linear>
     <template slot="items" slot-scope="props">
-      <td>{{ props.item.SenderNumber }}</td>
-      <td class="text-xs-right">{{ props.item.TextDecoded }}</td>
-      <td class="text-xs-right">{{ formatDate(props.item.ReceivingDateTime) }}</td>
+      <td width='10%'>{{ props.item.SenderNumber }}</td>
+      <td width='75%' class="text-xs-left">{{ props.item.TextDecoded }}</td>
+      <td class="text-xs-left">{{ formatDate(props.item.ReceivingDateTime) }}</td>
     </template>
   </v-data-table>
       </v-flex>
@@ -26,6 +26,21 @@ import { mapActions, mapGetters } from 'vuex';
 import TableFormatter from '@/js/formatters/TableFormatter'
 
 export default {
+  data () {
+    return {
+      pagination: {
+        sortBy: 'ID',
+        descending : true,
+        rowsPerPage : 10
+      },
+      errorMesssage: "",
+      headers: [
+        { value: 'SenderNumber', text: "Sender", sortable: true, align: 'center' },
+        { value: 'TextDecoded', text: "Text", sortable: true, align: 'left' },
+        { value: 'ReceivingDateTime', text: "Date", sortable: true, align: 'left' }
+      ]
+    }
+  },
   computed: {
     ...mapGetters({
       inboxList: 'api/inboxList',
@@ -56,20 +71,5 @@ export default {
       })
     }
   },
-  data () {
-    return {
-      pagination: {
-        sortBy: 'ID',
-        descending : true,
-        rowsPerPage : 10
-      },
-      errorMesssage: "",
-      headers: [
-        { value: 'SenderNumber', text: "Sender", sortable: true },
-        { value: 'TextDecoded', text: "Text", sortable: true },
-        { value: 'ReceivingDateTime', text: "Date", sortable: true }
-      ]
-    }
-  }
 }
 </script>

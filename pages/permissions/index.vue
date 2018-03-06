@@ -118,7 +118,6 @@ export default {
         let index = this.permissionList.indexOf(item)
         if(confirm('Are you sure you want to delete this number: ' + item.Number))
         {
-          console.log(item);
           this.deletePermissionItem(item)
         }
     },

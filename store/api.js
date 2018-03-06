@@ -85,8 +85,7 @@ export const actions = {
   },
   updatePermissionItem(context, data) {
     context.commit(setLoading, true);
-    return context.state.basementApi
-    .put(permissionsUrl, data)
+    return context.state.basementApi({method: 'delete', url: permissionsUrl, data: { Number : data.Number}})
     .then((response) => {
       context.commit("setPermissionsList", { data: response.data });
       context.commit(setLoading, false);

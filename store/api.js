@@ -7,6 +7,7 @@ const getLogsUrl = "/logs";
 const gpioUrl = "/gpio";
 const setGpio = "setGpio";
 const securityStatusUrl = "/security/status";
+const permissionsUrl = "/security/permissions";
 
 const setLoading = "setLoading";
 const sending = "sending";
@@ -18,6 +19,7 @@ export const state = () => ({
   sentList: [],
   logsList: [],
   gpioList: [],
+  permissionsList: [],
   isLoading: false,
   sending: false,
   securityStatus: { Enabled: 0, SmsEnabled: 0, SilentMode: 0 }
@@ -50,6 +52,9 @@ export const mutations = {
   setLoading: (state, isLoading) => {
     state.isLoading = isLoading;
   },
+  setPermissionsList: (state, permissions) => {
+    state.permissionsList = permissions.data;
+  },
   sending: (state, sending) => {
     state.sending = sending;
   }
@@ -69,6 +74,38 @@ export const actions = {
     .get(securityStatusUrl)
     .then((response) => {
       context.commit(setSecurityStatus, { data: response.data });
+    })
+  },
+  getPermissionList(context, data) {
+    return context.state.basementApi
+    .get(permissionsUrl)
+    .then((response) => {
+      context.commit("setPermissionsList", { data: response.data });
+    })
+  },
+  updatePermissionItem(context, data) {
+    context.commit(setLoading, true);
+    return context.state.basementApi
+    .put(permissionsUrl, data)
+    .then((response) => {
+      context.commit("setPermissionsList", { data: response.data });
+      context.commit(setLoading, false);
+    })
+  },
+  deletePermissionItem(context, data) {
+    context.commit(setLoading, true);
+    return context.state.basementApi
+    .delete(permissionsUrl, data)
+    .then((response) => {
+      context.commit("setPermissionsList", { data: response.data });
+      context.commit(setLoading, false);
+    })
+  },
+  createPermissionItem(context, data) {
+    return context.state.basementApi
+    .post(permissionsUrl, data)
+    .then((response) => {
+      context.commit("setPermissionsList", { data: response.data });
     })
   },
   setGpio(context, data) {
@@ -157,5 +194,8 @@ export const getters = {
   },
   gpioList: (state) => {
     return state.gpioList;
+  },
+  permissionsList: (state) => {
+    return state.permissionsList;
   }
 }

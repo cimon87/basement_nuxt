@@ -4,7 +4,7 @@
       <v-flex d-flex md7 xs12 sm12>
         <v-data-table
           :headers="headers"
-          :items="permisssionList"
+          :items="permissionList"
           :loading="isLoading"
           :pagination.sync="pagination"
           hide-actions
@@ -12,17 +12,20 @@
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
           <template slot="items" slot-scope="props" >
             <td class="text-xs-center">
-                <v-btn icon @click="editItem(props.item)">
+                <v-btn icon class="mx-0" @click="editItem(props.item)">
                   <v-icon color="teal">edit</v-icon>
+                </v-btn>
+                <v-btn icon class="mx-0" @click="deleteItem(props.item)">
+                  <v-icon color="red lighten-2">delete_forever</v-icon>
                 </v-btn>
             </td>
             <td class="text-xs-center">{{ props.item.Number }}</td>
             <td class="text-xs-center">
-                <v-icon v-if="props.item.Receive === true" color="green">done</v-icon>
+                <v-icon v-if="props.item.Receive " color="green">done</v-icon>
                 <v-icon v-else color="red">do_not_disturb_alt</v-icon>
             </td>
             <td class="text-xs-center">
-                <v-icon v-if="props.item.Send === true" color="green">done</v-icon>
+                <v-icon v-if="props.item.Send" color="green">done</v-icon>
                 <v-icon v-else color="red">do_not_disturb_alt</v-icon>
             </td>
           </template>
@@ -30,24 +33,29 @@
       </v-flex>
     </v-layout>
 
-    <v-dialog v-model="isEditing" max-width="400px">
+    <v-dialog v-model="dialog" max-width="400px">
       <v-card>
         <v-card-title>
-          <span class="headline">Edit permission</span>
+          <span class="headline"> {{ dialogTitle }} </span>
         </v-card-title>
         <v-card-text>
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex>
-                <v-text-field label="Phone number" v-model="editedItem.Number"></v-text-field>
+                <v-text-field 
+                  label="Phone number" 
+                  v-model="editedItem.Number" 
+                  :readonly="editedIndex >= 0"
+                  required>
+                </v-text-field>
                 <v-checkbox
                   color="orange"
-                  label="Allow receive commands"
+                  label="Allow receive notifications"
                   v-model="editedItem.Receive"
                 ></v-checkbox>
                 <v-checkbox
                   color="orange"
-                  label="Allow receive commands"
+                  label="Allow send commands"
                   v-model="editedItem.Send"
                 ></v-checkbox>
               </v-flex>
@@ -70,6 +78,7 @@
         fab
         bottom
         left
+        @click="addItem()"
       >
         <v-icon>add</v-icon>
       </v-btn>
@@ -78,48 +87,72 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
+  computed: {
+    ...mapGetters({
+      permissionList : 'api/permissionsList',
+      isLoading: 'api/isLoading'
+    }),
+    dialogTitle () {
+      return this.editedIndex === -1 ? 'Add permission' : 'Edit permission'
+    },
+  },
+  watch: {
+    dialog (val) {
+      val || this.close()
+    }
+  },
+  created () {
+    this.getPermissionList();
+  },
   methods: {
+    ...mapActions({
+      getPermissionList : "api/getPermissionList",
+      updatePermissionItem: "api/updatePermissionItem",
+      createPermissionItem: "api/createPermissionItem",
+      deletePermissionItem: "api/deletePermissionItem"
+    }),
+    deleteItem (item) {
+        let index = this.permissionList.indexOf(item)
+        if(confirm('Are you sure you want to delete this number: ' + item.Number))
+        {
+          console.log(item);
+          this.deletePermissionItem(item)
+        }
+    },
+    addItem() {
+      this.editItem(this.defaultItem);
+    },
     editItem(item) {
-      this.editedIndex = this.permisssionList.indexOf(item)
+      this.editedIndex = this.permissionList.indexOf(item)
       this.editedItem = Object.assign({}, item);
-      this.isEditing = true;
+      this.dialog = true;
     },
     close () {
-      this.isEditing = false
+      this.dialog = false
       var self = this;
-
-      setTimeout(() => {
-        self.editedItem = Object.assign({}, this.defaultItem)
-        self.editedIndex = -1;
-      }, 300);
     },
-
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.permisssionList[this.editedIndex], this.editedItem)
+        this.createPermissionItem(this.editedItem);
       } else {
-        this.permisssionList.push(this.editedItem)
+        this.updatePermissionItem(this.editedItem);
       }
       this.close()
     }
   },
   data () {
     return {
+      dialog: false,
       defaultItem: {
-        Number: '',
+        Number: '+48',
         Receive: false,
         Send: false
       },
       editedItem: {},
       editedIndex: -1,
-      isEditing: false,
-      isLoading: false,
-      permisssionList: [
-        { Number: '+48603705226', Receive: true, Send: true },
-        { Number: '+48888888888', Receive: true, Send: false },
-        { Number: '+48xxxxxxxxx', Receive: false, Send: false }
-      ],
       pagination: {
         sortBy: 'Number',
         descending : false,

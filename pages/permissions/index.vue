@@ -118,7 +118,7 @@ export default {
         let index = this.permissionList.indexOf(item)
         if(confirm('Are you sure you want to delete this number: ' + item.Number))
         {
-          this.deletePermissionItem(item)
+          this.deletePermissionItem(item.Number)
         }
     },
     addItem() {
@@ -134,7 +134,7 @@ export default {
       var self = this;
     },
     save () {
-      if (this.editedIndex > -1) {
+      if (this.editedIndex < 0) {
         this.createPermissionItem(this.editedItem);
       } else {
         this.updatePermissionItem(this.editedItem);

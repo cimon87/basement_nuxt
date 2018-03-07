@@ -85,16 +85,15 @@ export const actions = {
   },
   updatePermissionItem(context, data) {
     context.commit(setLoading, true);
-    return context.state.basementApi({method: 'delete', url: permissionsUrl, data: { Number : data.Number}})
+    return context.state.basementApi
+    .put(permissionsUrl,data)
     .then((response) => {
       context.commit("setPermissionsList", { data: response.data });
-      context.commit(setLoading, false);
     })
   },
-  deletePermissionItem(context, data) {
+  deletePermissionItem(context, number) {
     context.commit(setLoading, true);
-    return context.state.basementApi
-    .delete(permissionsUrl, data)
+    return context.state.basementApi( { method: 'delete', url: permissionsUrl, data: { number } })
     .then((response) => {
       context.commit("setPermissionsList", { data: response.data });
       context.commit(setLoading, false);

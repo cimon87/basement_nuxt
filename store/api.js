@@ -89,6 +89,7 @@ export const actions = {
     .put(permissionsUrl,data)
     .then((response) => {
       context.commit("setPermissionsList", { data: response.data });
+      context.commit(setLoading, false);
     })
   },
   deletePermissionItem(context, number) {

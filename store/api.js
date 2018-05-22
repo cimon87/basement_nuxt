@@ -161,6 +161,22 @@ export const actions = {
       context.commit(setLoading, false);
     });
   },
+  deleteInboxItems(context, data) {
+    return context.state.basementApi
+    ( { method: 'delete', url: getInboxUrl, data: { ids: data } })
+      .then((response) => {
+        context.commit('setInbox', { data: response.data });
+        context.commit('setLoading', false);
+      })
+  },
+  deleteSendItems(context, data) {
+    return context.state.basementApi
+    ( { method: 'delete', url: messagesUrl, data: { ids: data } })
+      .then((response) => {
+        context.commit('setSentItems', { data: response.data });
+        context.commit('setLoading', false);
+      })
+  },
   getLogs: (context) => {
     context.commit('setLoading', true);
     return context.state.basementApi

@@ -1,4 +1,6 @@
 <template>  
+<div>
+  <v-btn :disabled="this.selected.length == 0" color="orange darken-2" @click="deleteSelected()">Delete</v-btn>
   <v-container fluid grid-list-md>
     <v-layout row wrap>
       <v-flex d-flex>
@@ -6,11 +8,22 @@
           :headers="headers"
           :items="sentList"
           :loading="isLoading"
-          :pagination.sync="pagination"
           class="elevation-1"
+          v-model="selected"
+           item-key="ID"
+          :pagination.sync="pagination"
+          select-all
   >
   <v-progress-linear slot="progress" color="blue"  indeterminate></v-progress-linear>
     <template slot="items" slot-scope="props">
+      <td>
+          <v-checkbox
+            v-model="props.selected"
+            primary
+            color="orange"
+            hide-details
+          ></v-checkbox>
+        </td>
       <td width='5%'>{{ props.item.ID }}</td>
       <td width='5%' class="text-xs-left">{{ props.item.Status }}</td>
       <td width='5%' class="text-xs-left">{{ props.item.DestinationNumber }}</td>
@@ -23,6 +36,7 @@
       </v-flex>
     </v-layout>
   </v-container>
+  </div>
 </template>
 
 <script>
@@ -32,6 +46,7 @@ import TableFormatter from '@/js/formatters/TableFormatter'
 export default {
   data() {
     return {
+      selected: [],
       pagination: {
         sortBy: 'ID',
         descending : true,
@@ -66,7 +81,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getSentMessages: 'api/getSent'
+      getSentMessages: 'api/getSent',
+      deleteSendItems: "api/deleteSendItems"
     }),
     getMessages() {
       this.getSentMessages()
@@ -77,7 +93,24 @@ export default {
     },
     formatDate(value) {
       return TableFormatter.dateFormatter(value);
+    },
+    deleteSelected() {
+      if(confirm("Delete selected items?"))
+      {
+        let selectedIds = [];
+
+        for (let i = 0; i < this.selected.length; i++) {
+          selectedIds.push(this.selected[i].ID);
+        }
+
+        this.deleteSendItems(selectedIds);
+      }
     }
   },
 };
 </script>
+<style>
+  div[role='checkbox']{
+    color: #ff9800 !important;
+  }
+</style>

@@ -1,43 +1,40 @@
 <template>  
-  <v-container fluid grid-list-md>
+  <div>
+    <v-btn :disabled="this.selected.length == 0" color="orange darken-2" @click="deleteSelected()">Delete</v-btn>
+    <v-container fluid grid-list-md>
     <v-layout row wrap>
       <v-flex d-flex md12 xs12 sm12>
         <v-data-table
+          id="table"
           :headers="headers"
           :items="inboxList"
           :loading="isLoading"
            v-model="selected"
+           item-key="ID"
           :pagination.sync="pagination"
           select-all
-          class="elevation-1"
+          class="elevation-2"
   >
   <v-progress-linear slot="progress" color="blue"  indeterminate></v-progress-linear>
-   <template slot="headerCell" slot-scope="props">
-      <v-tooltip bottom>
-        <span slot="activator">
-          {{ props.header.text }}
-        </span>
-        <span>
-          {{ props.header.text }}
-        </span>
-      </v-tooltip>
-    </template>
+  
     <template slot="items" slot-scope="props">
         <td>
           <v-checkbox
             v-model="props.selected"
             primary
+            color="orange"
             hide-details
           ></v-checkbox>
         </td>
         <td width='10%'>{{ props.item.SenderNumber }}</td>
-        <td width='75%' class="text-xs-left">{{ props.item.TextDecoded }}</td>
+        <td width='65%' class="text-xs-left">{{ props.item.TextDecoded }}</td>
         <td class="text-xs-left">{{ formatDate(props.item.ReceivingDateTime) }}</td>
     </template>
   </v-data-table>
       </v-flex>
     </v-layout>
   </v-container>
+  </div>
 </template>
 <script>
 
@@ -81,7 +78,8 @@ export default {
       return TableFormatter.dateFormatter(value);
     },
     ...mapActions({
-      getInbox: 'api/getInbox'
+      getInbox: 'api/getInbox',
+      deleteInboxItems: 'api/deleteInboxItems'
     }),
     getInboxLocal() {
       this.getInbox()
@@ -90,18 +88,26 @@ export default {
         this.errorMesssage = err.Message;
       })
     },
-    toggleAll () {
-        if (this.selected.length) this.selected = []
-        else this.selected = this.inboxList.slice()
-    },
-    changeSort (column) {
-        if (this.pagination.sortBy === column) {
-          this.pagination.descending = !this.pagination.descending
-        } else {
-          this.pagination.sortBy = column
-          this.pagination.descending = false
+    deleteSelected() {
+      if(confirm("Delete selected items?"))
+      {
+        let selectedIds = [];
+
+        for (let i = 0; i < this.selected.length; i++) {
+          selectedIds.push(this.selected[i].ID);
         }
+
+        this.deleteInboxItems(selectedIds);
       }
+    }
   },
 }
 </script>
+
+<style>
+
+  div[role='checkbox']{
+    color: #ff9800 !important;
+  }
+</style>
+

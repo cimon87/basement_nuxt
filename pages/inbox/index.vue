@@ -1,7 +1,18 @@
 <template>  
   <div>
-    <v-btn :disabled="this.selected.length == 0" color="orange darken-2" @click="deleteSelected()">Delete</v-btn>
     <v-container fluid grid-list-md>
+      <v-layout row wrap>
+        <v-btn :disabled="this.selected.length == 0" color="orange darken-2" @click="deleteSelected()">Delete</v-btn>
+        <v-spacer/>
+        <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            hide-details
+            color="grey lighten-1"
+      ></v-text-field>
+      </v-layout>
     <v-layout row wrap>
       <v-flex d-flex md12 xs12 sm12>
         <v-data-table
@@ -9,8 +20,9 @@
           :headers="headers"
           :items="inboxList"
           :loading="isLoading"
-           v-model="selected"
-           item-key="ID"
+          :search="search"
+          v-model="selected"
+          item-key="ID"
           :pagination.sync="pagination"
           select-all
           class="elevation-2"
@@ -44,6 +56,7 @@ import TableFormatter from '@/js/formatters/TableFormatter'
 export default {
   data () {
     return {
+      search: '',
       selected: [],
       pagination: {
         sortBy: 'ID',
@@ -97,7 +110,10 @@ export default {
           selectedIds.push(this.selected[i].ID);
         }
 
-        this.deleteInboxItems(selectedIds);
+        this.deleteInboxItems(selectedIds)
+        .then(() => {
+          this.selected = [];
+        })
       }
     }
   },

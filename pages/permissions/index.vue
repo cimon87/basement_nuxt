@@ -1,4 +1,11 @@
 <template>  
+<div>
+      <v-btn
+        color="green"
+        @click="addItem()"
+      >
+Add
+      </v-btn>
   <v-container fluid grid-list-md>
     <v-layout row wrap>
       <v-flex d-flex md7 xs12 sm12>
@@ -69,21 +76,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <br>
-    <v-fab-transition>
-      <v-btn
-        color="green"
-        dark
-        fixed
-        fab
-        bottom
-        left
-        @click="addItem()"
-      >
-        <v-icon>add</v-icon>
-      </v-btn>
-    </v-fab-transition>
   </v-container>
+  </div>
 </template>
 
 <script>

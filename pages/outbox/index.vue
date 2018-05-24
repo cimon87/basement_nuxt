@@ -1,7 +1,18 @@
 <template>  
 <div>
-  <v-btn :disabled="this.selected.length == 0" color="orange darken-2" @click="deleteSelected()">Delete</v-btn>
   <v-container fluid grid-list-md>
+    <v-layout row wrap>
+        <v-btn :disabled="this.selected.length == 0" color="orange darken-2" @click="deleteSelected()">Delete</v-btn>
+        <v-spacer/>
+        <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            hide-details
+            color="grey lighten-1">
+        </v-text-field>
+      </v-layout>
     <v-layout row wrap>
       <v-flex d-flex>
         <v-data-table
@@ -13,7 +24,7 @@
            item-key="ID"
           :pagination.sync="pagination"
           select-all
-  >
+        >
   <v-progress-linear slot="progress" color="blue"  indeterminate></v-progress-linear>
     <template slot="items" slot-scope="props">
       <td>
@@ -32,6 +43,9 @@
       <td class="text-xs-left">{{ formatDate(props.item.UpdatedInDB) }}</td>
       <td class="text-xs-left">{{ formatDate(props.item.InsertIntoDB) }}</td>
     </template>
+    <v-alert slot="no-results" :value="true" color="error" icon="warning">
+        Your search for "{{ search }}" found no results.
+    </v-alert>
   </v-data-table>
       </v-flex>
     </v-layout>
@@ -87,7 +101,6 @@ export default {
     getMessages() {
       this.getSentMessages()
       .catch((error) => {
-        console.log(error);
         this.errorMessage = error.message;
       })
     },
@@ -103,7 +116,10 @@ export default {
           selectedIds.push(this.selected[i].ID);
         }
 
-        this.deleteSendItems(selectedIds);
+        this.deleteSendItems(selectedIds)
+        .then(() => {
+          this.selected = [];
+        })
       }
     }
   },

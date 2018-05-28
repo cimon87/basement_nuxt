@@ -19,6 +19,7 @@
           :headers="headers"
           :items="sentList"
           :loading="isLoading"
+          :search="search"
           class="elevation-1"
           v-model="selected"
            item-key="ID"
@@ -60,6 +61,7 @@ import TableFormatter from '@/js/formatters/TableFormatter'
 export default {
   data() {
     return {
+      search: '',
       selected: [],
       pagination: {
         sortBy: 'ID',
